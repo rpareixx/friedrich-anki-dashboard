@@ -5,14 +5,15 @@ interface Props {
   userSlug: string;
   brawlerSubject: string;
   apiBase: string;
+  devToken?: string;
 }
 
-const { userSlug, brawlerSubject, apiBase } = Astro.props;
+const { userSlug, brawlerSubject, apiBase, devToken = "" } = Astro.props;
 const stateUrl = `${apiBase}/api/state/${userSlug}/${brawlerSubject}`;
 ---
 
 <section
-  x-data={`statusCard({ stateUrl: '${stateUrl}', userSlug: '${userSlug}', brawlerSubject: '${brawlerSubject}' })`}
+  x-data={`statusCard({ stateUrl: '${stateUrl}', userSlug: '${userSlug}', brawlerSubject: '${brawlerSubject}', devToken: '${devToken}' })`}
   x-init="init()"
   class="space-y-4"
 >
@@ -125,6 +126,7 @@ const stateUrl = `${apiBase}/api/state/${userSlug}/${brawlerSubject}`;
       stateUrl: opts.stateUrl,
       userSlug: opts.userSlug,
       brawlerSubject: opts.brawlerSubject,
+      devToken: opts.devToken || "",
       state: null,
       loading: true,
       error: null,
@@ -135,17 +137,24 @@ const stateUrl = `${apiBase}/api/state/${userSlug}/${brawlerSubject}`;
         this.loading = true;
         this.error = null;
         try {
+          const headers = { Accept: "application/json" };
+          if (this.devToken) {
+            headers["Authorization"] = "Bearer " + this.devToken;
+          }
           const r = await fetch(this.stateUrl, {
             credentials: "include",
-            headers: { Accept: "application/json" },
+            headers,
           });
           if (r.status === 401 || r.status === 403) {
-            window.location.href =
-              this.stateUrl + "?_redirect=" + encodeURIComponent(window.location.pathname);
+            // In Production: Cloudflare Access redirected automatisch zum Login-Flow
+            // (das passiert vor diesem fetch, durch CF-Edge). Wenn wir hier landen,
+            // ist entweder kein CF Access davor oder kein Dev-Token gesetzt.
+            this.error =
+              "Auth fehlt. Lokal: PUBLIC_DEV_TOKEN beim Build setzen (= DEV_TOKEN im Backend).";
             return;
           }
           if (!r.ok) {
-            this.error = `HTTP ${r.status}`;
+            this.error = "HTTP " + r.status;
             return;
           }
           this.state = await r.json();

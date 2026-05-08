@@ -1,6 +1,9 @@
 services:
   dashboard:
-    build: .
+    build:
+      context: .
+      args:
+        PUBLIC_DEV_TOKEN: ${PUBLIC_DEV_TOKEN:-}
     container_name: friedrich-anki-dashboard
     ports:
       - "8000:8000"

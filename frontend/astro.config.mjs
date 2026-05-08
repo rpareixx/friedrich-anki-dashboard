@@ -18,6 +18,9 @@ export default defineConfig({
       "import.meta.env.PUBLIC_API_BASE": JSON.stringify(
         process.env.API_BASE ?? "",
       ),
+      "import.meta.env.PUBLIC_DEV_TOKEN": JSON.stringify(
+        process.env.PUBLIC_DEV_TOKEN ?? "",
+      ),
     },
   },
 });
