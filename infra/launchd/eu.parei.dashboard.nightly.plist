@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+Install:
+  cp infra/launchd/eu.parei.dashboard.nightly.plist ~/Library/LaunchAgents/
+  Edit paths/keys in the copy (NOT this template).
+  launchctl load ~/Library/LaunchAgents/eu.parei.dashboard.nightly.plist
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>eu.parei.dashboard.nightly</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/rparei/Projekte/Claude_Code_Workspace/friedrich-anki-dashboard/.venv/bin/dashboard-pipeline</string>
+        <string>push</string>
+        <string>--user</string>
+        <string>robert</string>
+        <string>--subject</string>
+        <string>englisch</string>
+        <string>--deck</string>
+        <string>Sprachen::Robert::Englisch</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PIPELINE_API_KEY</key>
+        <string>REPLACE_WITH_PROD_KEY</string>
+        <key>DASHBOARD_API_URL</key>
+        <string>https://robert.parei.eu</string>
+        <key>ANKI_CONNECT_URL</key>
+        <string>http://127.0.0.1:8765</string>
+        <key>TIMEZONE</key>
+        <string>Europe/Berlin</string>
+    </dict>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>23</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/dashboard-pipeline.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/dashboard-pipeline.err.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>
