@@ -1,0 +1,19 @@
+services:
+  dashboard:
+    build: .
+    container_name: friedrich-anki-dashboard
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite:////data/dashboard.db
+      JWT_SECRET: ${JWT_SECRET:-change-me}
+      PIPELINE_API_KEY: ${PIPELINE_API_KEY:-change-me}
+      DEV_TOKEN: ${DEV_TOKEN:-local-dev-only}
+      DAILY_GOAL_THRESHOLD: ${DAILY_GOAL_THRESHOLD:-20}
+      TIMEZONE: ${TIMEZONE:-Europe/Berlin}
+    volumes:
+      - dashboard-data:/data
+    restart: unless-stopped
+
+volumes:
+  dashboard-data:

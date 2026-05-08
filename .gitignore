@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# uv
+.venv/
+.python-version
+
+# Pytest / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Local env / data
+.env
+.env.local
+data/*.db
+data/*.db-journal
+
+# Style-Reference (Brawl-Stars-Screenshot — Urheberrecht, lokal halten)
+assets/style/style-reference.*
+assets/style/style-reference
+
+# Frontend build artifacts (kommt in Task 4)
+frontend/dist/
+frontend/node_modules/
+frontend/.astro/
