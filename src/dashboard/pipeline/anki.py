@@ -50,4 +50,6 @@ def reviews_in_local_day(
     end_ms = int(day_end.timestamp() * 1000)
 
     reviews = anki.card_reviews_since(deck, since_ms=start_ms)
-    return sum(1 for r in reviews if len(r) >= 5 and start_ms <= int(r[4]) <= end_ms)
+    # AnkiConnect cardReviews schema: r[0] is the review timestamp (ms).
+    # r[4] is lastIvl (interval), NOT a timestamp — using it would always return 0.
+    return sum(1 for r in reviews if len(r) >= 1 and start_ms <= int(r[0]) <= end_ms)

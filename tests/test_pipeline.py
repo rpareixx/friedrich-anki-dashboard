@@ -67,12 +67,13 @@ def test_reviews_in_local_day_counts_within_window(monkeypatch: pytest.MonkeyPat
     yesterday = _ms(datetime.combine(date(2026, 5, 7), time(23, 0), tzinfo=tz))
     tomorrow = _ms(datetime.combine(date(2026, 5, 9), time(0, 30), tzinfo=tz))
 
+    # AnkiConnect cardReviews schema: r[0] is the review timestamp (ms)
     reviews = [
-        [1, 2, 3, 4, in_window],
-        [1, 2, 3, 4, in_window + 1000],
-        [1, 2, 3, 4, in_window + 2000],
-        [1, 2, 3, 4, yesterday],  # outside (older than start)
-        [1, 2, 3, 4, tomorrow],  # outside (after end)
+        [in_window, 2, 3, 4, 5],
+        [in_window + 1000, 2, 3, 4, 5],
+        [in_window + 2000, 2, 3, 4, 5],
+        [yesterday, 2, 3, 4, 5],  # outside (older than start)
+        [tomorrow, 2, 3, 4, 5],  # outside (after end)
     ]
     transport = _mock_anki_response(reviews)
     monkeypatch.setattr(httpx, "post", lambda *a, **kw: httpx.Client(transport=transport).post(*a, **kw))
@@ -96,7 +97,7 @@ def test_dry_run_prints_json_and_exits_0(
     tz = ZoneInfo("Europe/Berlin")
     today = date(2026, 5, 8)
     in_window = _ms(datetime.combine(today, time(10, 30), tzinfo=tz))
-    transport = _mock_anki_response([[1, 2, 3, 4, in_window]] * 5)
+    transport = _mock_anki_response([[in_window, 2, 3, 4, 5]] * 5)
     monkeypatch.setattr(httpx, "post", lambda *a, **kw: httpx.Client(transport=transport).post(*a, **kw))
 
     rc = pipeline_main(
@@ -140,7 +141,7 @@ def test_dry_run_does_not_post_to_dashboard(monkeypatch: pytest.MonkeyPatch) -> 
         posts.append(url)
         if "test-anki" in url:
             return httpx.Client(
-                transport=_mock_anki_response([[1, 2, 3, 4, in_window]])
+                transport=_mock_anki_response([[in_window, 2, 3, 4, 5]])
             ).post(url, *args, **kwargs)
         raise AssertionError(f"unexpected POST to {url}")
 
@@ -198,7 +199,7 @@ def test_push_requires_api_key(
     tz = ZoneInfo("Europe/Berlin")
     today = date(2026, 5, 8)
     in_window = _ms(datetime.combine(today, time(10, 30), tzinfo=tz))
-    transport = _mock_anki_response([[1, 2, 3, 4, in_window]])
+    transport = _mock_anki_response([[in_window, 2, 3, 4, 5]])
     monkeypatch.setattr(httpx, "post", lambda *a, **kw: httpx.Client(transport=transport).post(*a, **kw))
     monkeypatch.delenv("PIPELINE_API_KEY", raising=False)
 
