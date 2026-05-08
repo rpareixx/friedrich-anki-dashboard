@@ -1,0 +1,20 @@
+---
+import Default from "../layouts/Default.astro";
+import StatusCard from "../components/StatusCard.astro";
+
+const userSlug = import.meta.env.PUBLIC_USER_SLUG ?? "robert";
+const brawlerSubject = import.meta.env.PUBLIC_BRAWLER_SUBJECT ?? "englisch";
+const apiBase = import.meta.env.PUBLIC_API_BASE ?? "";
+---
+
+<Default title={`${userSlug} — friedrich-anki-dashboard`}>
+  <StatusCard
+    userSlug={userSlug}
+    brawlerSubject={brawlerSubject}
+    apiBase={apiBase}
+  />
+
+  <footer class="mt-10 text-center text-xs text-brawl-dim">
+    <span>friedrich-anki-dashboard · Phase 4.1a</span>
+  </footer>
+</Default>

@@ -1,3 +1,17 @@
+FROM node:20-alpine AS frontend
+WORKDIR /frontend
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm install --no-audit --no-fund
+COPY frontend ./
+ARG USER_SLUG=robert
+ARG BRAWLER_SUBJECT=englisch
+ARG API_BASE=
+ENV USER_SLUG=$USER_SLUG \
+    BRAWLER_SUBJECT=$BRAWLER_SUBJECT \
+    API_BASE=$API_BASE
+RUN npm run build
+
+
 FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
@@ -20,10 +34,14 @@ RUN pip install --no-cache-dir \
     "pydantic-settings>=2.6.0" \
     "python-jose[cryptography]>=3.3.0" \
     "pyyaml>=6.0.2" \
+    "httpx>=0.28.0" \
  && pip install --no-cache-dir --no-deps -e .
 
+COPY --from=frontend /frontend/dist ./frontend/dist
+
 RUN mkdir -p /data
-ENV DATABASE_URL=sqlite:////data/dashboard.db
+ENV DATABASE_URL=sqlite:////data/dashboard.db \
+    FRONTEND_DIST=/app/frontend/dist
 
 EXPOSE 8000
 

@@ -1,0 +1,180 @@
+---
+import BrawlerAvatar from "./BrawlerAvatar.astro";
+
+interface Props {
+  userSlug: string;
+  brawlerSubject: string;
+  apiBase: string;
+}
+
+const { userSlug, brawlerSubject, apiBase } = Astro.props;
+const stateUrl = `${apiBase}/api/state/${userSlug}/${brawlerSubject}`;
+---
+
+<section
+  x-data={`statusCard({ stateUrl: '${stateUrl}', userSlug: '${userSlug}', brawlerSubject: '${brawlerSubject}' })`}
+  x-init="init()"
+  class="space-y-4"
+>
+  <header class="flex items-center justify-between">
+    <h1 class="font-display text-3xl tracking-wide text-brawl-accent">
+      {userSlug.charAt(0).toUpperCase() + userSlug.slice(1)}
+    </h1>
+    <span class="pill bg-brawl-card text-brawl-dim">
+      <span class="capitalize">{brawlerSubject}</span>
+    </span>
+  </header>
+
+  <div class="rounded-3xl bg-brawl-card/80 p-6 shadow-2xl shadow-black/40 backdrop-blur-sm border border-white/5">
+    <div class="flex flex-col items-center gap-4">
+      <BrawlerAvatar />
+
+      <div x-show="loading" class="text-brawl-dim text-sm">Lade Stats…</div>
+
+      <div
+        x-show="error"
+        x-cloak
+        class="text-brawl-streak text-sm text-center"
+        x-text="error"
+      ></div>
+
+      <div x-show="!loading && !error && state" x-cloak class="w-full space-y-3">
+        <div class="text-center">
+          <div
+            x-show="state.achieved_today"
+            class="pill bg-brawl-ok/20 text-brawl-ok"
+          >
+            Tagesziel erreicht
+          </div>
+          <div
+            x-show="!state.achieved_today"
+            x-cloak
+            class="pill bg-white/5 text-brawl-dim"
+          >
+            Tagesziel offen
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div class="stat-tile text-center">
+            <div class="text-xs uppercase tracking-wider text-brawl-dim">
+              Heute
+            </div>
+            <div
+              class="font-display text-2xl text-white"
+              x-text="state.reviews_today"
+            ></div>
+            <div class="text-xs text-brawl-dim">Reviews</div>
+          </div>
+
+          <div class="stat-tile text-center">
+            <div class="text-xs uppercase tracking-wider text-brawl-dim">
+              Streak
+            </div>
+            <div class="flex items-center justify-center gap-1">
+              <span class="font-display text-2xl text-brawl-streak"
+                x-text="state.streak_current"
+              ></span>
+              <span class="text-brawl-streak text-lg">🔥</span>
+            </div>
+            <div
+              class="text-xs text-brawl-dim"
+              x-text="`Best: ${state.streak_max}`"
+            ></div>
+          </div>
+
+          <div class="stat-tile text-center">
+            <div class="text-xs uppercase tracking-wider text-brawl-dim">
+              Coins
+            </div>
+            <div class="flex items-center justify-center gap-1">
+              <span
+                class="font-display text-2xl text-brawl-coin"
+                x-text="state.coins_total"
+              ></span>
+              <span class="text-brawl-coin text-lg">🪙</span>
+            </div>
+            <div class="text-xs text-brawl-dim">total</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button
+    @click="refresh()"
+    :disabled="loading"
+    class="tap-target w-full rounded-full bg-brawl-accent/10 px-4 py-3 text-brawl-accent font-semibold disabled:opacity-50 hover:bg-brawl-accent/20 transition"
+  >
+    <span x-show="!loading">Aktualisieren</span>
+    <span x-show="loading" x-cloak>…</span>
+  </button>
+
+  <p
+    class="text-center text-xs text-brawl-dim"
+    x-show="state"
+    x-cloak
+    x-text="`Stand: ${formatTimestamp(state.updated_at)}`"
+  ></p>
+</section>
+
+<script is:inline define:vars={{}}>
+  // Alpine component (registered before Alpine.start in Default layout's script)
+  window.statusCard = function (opts) {
+    return {
+      stateUrl: opts.stateUrl,
+      userSlug: opts.userSlug,
+      brawlerSubject: opts.brawlerSubject,
+      state: null,
+      loading: true,
+      error: null,
+      async init() {
+        await this.refresh();
+      },
+      async refresh() {
+        this.loading = true;
+        this.error = null;
+        try {
+          const r = await fetch(this.stateUrl, {
+            credentials: "include",
+            headers: { Accept: "application/json" },
+          });
+          if (r.status === 401 || r.status === 403) {
+            window.location.href =
+              this.stateUrl + "?_redirect=" + encodeURIComponent(window.location.pathname);
+            return;
+          }
+          if (!r.ok) {
+            this.error = `HTTP ${r.status}`;
+            return;
+          }
+          this.state = await r.json();
+        } catch (e) {
+          this.error = "Backend nicht erreichbar";
+        } finally {
+          this.loading = false;
+        }
+      },
+      formatTimestamp(ts) {
+        if (!ts) return "";
+        try {
+          const d = new Date(ts);
+          return d.toLocaleString("de-DE", {
+            hour: "2-digit",
+            minute: "2-digit",
+            day: "2-digit",
+            month: "2-digit",
+          });
+        } catch {
+          return ts;
+        }
+      },
+    };
+  };
+</script>
+
+<style>
+  [x-cloak] {
+    display: none !important;
+  }
+</style>

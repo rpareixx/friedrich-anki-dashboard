@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #0e0c1a;
+    color: #f4f1ff;
+    font-family: "Inter", system-ui, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-image: radial-gradient(
+        ellipse 80% 60% at 50% -10%,
+        rgba(255, 214, 74, 0.15),
+        transparent 60%
+      ),
+      linear-gradient(180deg, #0e0c1a 0%, #1a1730 100%);
+    background-attachment: fixed;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold;
+  }
+
+  .stat-tile {
+    @apply rounded-2xl bg-brawl-card/80 p-4 backdrop-blur-sm border border-white/5;
+  }
+
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
