@@ -26,7 +26,7 @@ htmlcov/
 
 # Local env / data
 .env
-.env.local
+.env.*
 data/*.db
 data/*.db-journal
 

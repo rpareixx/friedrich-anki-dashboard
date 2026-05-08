@@ -63,10 +63,16 @@ def build_payload(args: argparse.Namespace) -> dict:
 
 
 def push(payload: dict, dashboard_url: str, api_key: str) -> dict:
+    headers = {"Authorization": f"Bearer {api_key}"}
+    cf_id = os.environ.get("CF_ACCESS_CLIENT_ID")
+    cf_secret = os.environ.get("CF_ACCESS_CLIENT_SECRET")
+    if cf_id and cf_secret:
+        headers["CF-Access-Client-Id"] = cf_id
+        headers["CF-Access-Client-Secret"] = cf_secret
     r = httpx.post(
         f"{dashboard_url.rstrip('/')}/api/stats",
         json=payload,
-        headers={"Authorization": f"Bearer {api_key}"},
+        headers=headers,
         timeout=30.0,
     )
     r.raise_for_status()

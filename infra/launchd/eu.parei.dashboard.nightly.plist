@@ -28,7 +28,11 @@ Install:
         <key>PIPELINE_API_KEY</key>
         <string>REPLACE_WITH_PROD_KEY</string>
         <key>DASHBOARD_API_URL</key>
-        <string>https://robert.parei.eu</string>
+        <string>https://robert.parei-stuttgart.de</string>
+        <key>CF_ACCESS_CLIENT_ID</key>
+        <string>REPLACE_WITH_CF_ACCESS_CLIENT_ID</string>
+        <key>CF_ACCESS_CLIENT_SECRET</key>
+        <string>REPLACE_WITH_CF_ACCESS_CLIENT_SECRET</string>
         <key>ANKI_CONNECT_URL</key>
         <string>http://127.0.0.1:8765</string>
         <key>TIMEZONE</key>
