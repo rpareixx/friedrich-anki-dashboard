@@ -34,6 +34,9 @@ data/*.db-journal
 assets/style/style-reference.*
 assets/style/style-reference
 
+# ChatGPT-Rohdateien (Leerzeichen im Namen, nicht committen)
+assets/brawlers/**/ChatGPT*
+
 # Frontend build artifacts (kommt in Task 4)
 frontend/dist/
 frontend/node_modules/
