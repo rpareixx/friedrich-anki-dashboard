@@ -8,14 +8,9 @@ const { userSlug, brawlerSubject } = Astro.props;
 const src = `/assets/brawlers/${userSlug}-${brawlerSubject}/common-idle.png`;
 ---
 
-<div
-  class="relative h-48 w-48 sm:h-56 sm:w-56 flex items-center justify-center"
-  aria-label={`${userSlug} ${brawlerSubject} Brawler`}
->
-  <img
-    src={src}
-    alt={`${userSlug} ${brawlerSubject} Brawler`}
-    class="h-full w-full object-contain drop-shadow-2xl"
-    loading="eager"
-  />
-</div>
+<img
+  src={src}
+  alt={`${userSlug} ${brawlerSubject} Brawler`}
+  class="h-48 w-48 sm:h-56 sm:w-56 object-contain drop-shadow-2xl"
+  loading="eager"
+/>
