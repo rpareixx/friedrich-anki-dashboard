@@ -13,18 +13,26 @@ app.include_router(stats.router)
 app.include_router(state.router)
 
 
-def _frontend_dist() -> Path | None:
-    candidates = [
-        Path(os.environ.get("FRONTEND_DIST", "")),
-        Path("/app/frontend/dist"),
-        Path(__file__).resolve().parents[2] / "frontend" / "dist",
-    ]
+def _find_dir(env_key: str, *fallbacks: Path) -> Path | None:
+    candidates = [Path(os.environ.get(env_key, "")), *fallbacks]
     for p in candidates:
         if p and p.exists() and p.is_dir():
             return p
     return None
 
 
-_dist = _frontend_dist()
+_assets = _find_dir(
+    "ASSETS_DIR",
+    Path("/app/assets"),
+    Path(__file__).resolve().parents[2] / "assets",
+)
+if _assets is not None:
+    app.mount("/assets", StaticFiles(directory=str(_assets)), name="assets")
+
+_dist = _find_dir(
+    "FRONTEND_DIST",
+    Path("/app/frontend/dist"),
+    Path(__file__).resolve().parents[2] / "frontend" / "dist",
+)
 if _dist is not None:
     app.mount("/", StaticFiles(directory=str(_dist), html=True), name="frontend")

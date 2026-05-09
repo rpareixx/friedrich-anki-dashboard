@@ -28,7 +28,7 @@ const stateUrl = `${apiBase}/api/state/${userSlug}/${brawlerSubject}`;
 
   <div class="rounded-3xl bg-brawl-card/80 p-6 shadow-2xl shadow-black/40 backdrop-blur-sm border border-white/5">
     <div class="flex flex-col items-center gap-4">
-      <BrawlerAvatar />
+      <BrawlerAvatar userSlug={userSlug} brawlerSubject={brawlerSubject} />
 
       <div x-show="loading" class="text-brawl-dim text-sm">Lade Stats…</div>
 

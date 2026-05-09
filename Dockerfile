@@ -40,10 +40,12 @@ RUN pip install --no-cache-dir \
  && pip install --no-cache-dir --no-deps -e .
 
 COPY --from=frontend /frontend/dist ./frontend/dist
+COPY assets ./assets
 
 RUN mkdir -p /data
 ENV DATABASE_URL=sqlite:////data/dashboard.db \
-    FRONTEND_DIST=/app/frontend/dist
+    FRONTEND_DIST=/app/frontend/dist \
+    ASSETS_DIR=/app/assets
 
 EXPOSE 8000
 
