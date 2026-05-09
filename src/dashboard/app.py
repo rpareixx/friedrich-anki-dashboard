@@ -27,7 +27,7 @@ _assets = _find_dir(
     Path(__file__).resolve().parents[2] / "assets",
 )
 if _assets is not None:
-    app.mount("/assets", StaticFiles(directory=str(_assets)), name="assets")
+    app.mount("/brawler-assets", StaticFiles(directory=str(_assets)), name="assets")
 
 _dist = _find_dir(
     "FRONTEND_DIST",
